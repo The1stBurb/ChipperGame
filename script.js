@@ -14,7 +14,30 @@ function rdm(a) {if(a<=0)return"0";let b = Math.floor(Math.log10(a) / 3);return 
 let bst="Buy";
 let bsa=1;
 function bt(a){bst=["Buy","Sell"][a];document.querySelectorAll("#buySell").forEach(e => {e.textContent = bst})}
-function ba(a){bsa=a;document.querySelectorAll("#buySellAmount").forEach(e => {e.textContent = a;})}
+function ba(a){bsa=a;document.querySelectorAll("#buySellAmount").forEach(e => {e.textContent = a;cpb()})}
+//check if it is possible to purchase a chip and change styling
+function cpb(){
+    for(var a in cost){if(cost[a]*bsa>mmy&&bst=="buy"){}}
+}
+let cost={"not":1.5,"and":3,"nand":1,"or":4,"nor":6,"xor":8,"xnor":10}
+function buyChip(a){if(bst=="Buy"){if(cost[a]*bsa>my){errorTxt.textContent="You do not have enough funds to purchase a "+stringPack[a]+" chip.";}else{mx=Math.min(cnt[a][1]-cnt[a][0],bsa);my-=cost[a]*mx;cnt[a][0]+=mx;}}else{mn=Math.min(Math.min(bsa,cnt[a][0]),Math.floor((mmy-my)/(cost[a])));my+=cost[a]*mn;cnt[a][0]-=mn;};ud(a);cpb()}
+
+function createChip(a){
+    for(var i=0; i<cts[a].length; i+=2){if(cnt[cts[a][i]][0]<cts[a][i+1]){return}}
+    for(var i=0; i<cts[a].length; i+=2){cnt[cts[a][i]][0]-=cts[a][i+1]}
+    // unlocked.push(chip)
+    // update[chip]=0
+    document.getElementById("build"+a).remove();
+    document.getElementById(a+"_row").style.display="table-row";
+    cq[a]=10
+    // 
+    // 
+    ud()
+}
+
+function createque(){
+    for(var i in cq){cq[i]-=1;document.querySelector("#create_"+i+" #dur").textContent=cq[i];if(cq[i]==0){delete cq[i]; document.querySelector("#create_"+i).remove();document.getElementById(i+"_buy").style.display="inline-block";document.getElementById(i+"_buy").insertAdjacentHTML("beforeend","<span id='buySell'>Buy</span> <span id='buySellAmount'>1</span> "+stringPack[i]+" chip (Cost: $<span id='"+i+"Price'>0</span>)</button>");}}
+}
 
 //update an individula info row display
 function uid(a,b,c){const d=document.querySelector("#"+a+"_row #count #total");const e=document.querySelector("#"+a+"_row #count #max");if(!(d&&e)){return}d.textContent=b;d.className=(b<Math.ceil(c)*1/10?"resourceCountEmpty":(b>Math.ceil(c)*9/10?"resourceCountFull":(b>Math.ceil(c)*8/10?"resourceCountNearFull":"")));e.textContent=c;}
@@ -22,20 +45,23 @@ function ud(a){
     uid("money",my,mmy)
     if(a){uid(a,cnt[a][0],cnt[a][1])}
     else{for(var b in cnt){uid(b,cnt[b][0],cnt[b][1])}}
-    // for(var i in cost){price[i].textContent=cost[i]*buySellAmnt}
-    
+    for(var i in cost){try{document.getElementById(i+"Price").textContent=cost[i]*bsa;}catch{}}
+    if(Object.keys(cq).length!=0){
+        createque()
+        setTimeout(ud,1000)
+    }
     // if(chip){updateInfoDisp(chip,count[chip][0],count[chip][1])}
     // else{for(var i in count){updateInfoDisp(i,count[i][0],count[i][1])}}
 }
 
 //open a bar/tab
-function otb(a){document.getElementById(a+"Bar").classList.remove("hideBar")}
+function otb(a){document.getElementById(a+"Tab").classList.replace("closeTab","openTab");document.getElementById(a+"Bar").classList.remove("hideBar")}
 //close a bar/tab
-function ctb(a){document.getElementById(a+"Bar").classList.add("hideBar")}
+function ctb(a){document.getElementById(a+"Tab").classList.replace("openTab","closeTab");document.getElementById(a+"Bar").classList.add("hideBar")}
 //current open tab
 var ont="store"
 //close and open tabs (navigate the page)
-function cotb(a){otb(a);ctb(ont);ont=a;}
+function cotb(a){ctb(ont);otb(a);ont=a;}
 
 //cost of each chip to BUILD
 const cts={"not":["nand",1],"and":["nand",1,"not",1],"or":["nand",1,"not",2],"nor":["or",1,"not",1],"xor":["nand",4],"xnor":["not",1,"xor",1]}
@@ -49,12 +75,15 @@ var ui=["money","nand_chip"]
 var ust={"bsc_chp":["nand"],"adv_chp":[],"bsc_brd":[],"adv_brd":[]}
 //amount for buySell
 var ab=[1,5,10,50]
+//create queue
+var cq={"not":5}
 //customize names
 var stringPack={
     "money":"$","not":"NOT","and":"AND","nand":"NAND","or":"OR","nor":"NOR","xor":"XOR","xnor":"XNOR",
     "info_caption":"Resources",
     "buy_tglBtn":"Buy","sell_tglBtn":"Sell","store_tab":"Store","build_tab":"Build","research_tab":"Research","setting_tab":"Settings",
     "bsc_chp":"Basic Chips","adv_chp":"Advanced Chips","bsc_brd":"Basic Boards","adv_brd":"Advanced Boards",
+    "store_tab":"Store","build_tab":"Create","research_tab":"Research","setting_tab":"Settings",
 }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -71,26 +100,30 @@ document.addEventListener('DOMContentLoaded', function(){
     const cls=document.createElement("style")
     function styles(parent = {}, child = {}) {return {bgcol: child.bgcol ?? parent.bgcol,col: child.col ?? parent.col,width: child.width ?? parent.width,bcol: child.bcol ?? parent.bcol,radius: child.radius ?? parent.radius,hover: child.hover ?? false,height:child.height??false,nth:parent.nth??child.nth};}
     
-    var impStyle={"main":{bgcol:"#222",col:"#eee",width:0,bcol:"#000",radius:0,nth:-1,},
-    "basicBtn":{bgcol:"#444",col:"#eee",width:2,bcol:"#393939",radius:10},"basicBtn:hover":{parent:"basicBtn",bgcol:"#555",bcol:"#ddd"},
+    var impStyle={
+        "main":{bgcol:"#222",col:"#eee",bcol:"#000",radius:0,nth:-1,},
+    "basicBtn":{bgcol:"#444",col:"#eee",bcol:"#393939",radius:10},"basicBtn:hover":{parent:"basicBtn",bgcol:"#555",bcol:"#ddd"},
     
     "tooExpensive":{parent:"basicBtn",bgcol:"#a00"},"tooExpensive:hover":{parent:"tooExpensive",},
     
     "vertBar":{width:2,color:"#444"},
-    "horizBar":{height:3,bgcol:"#333",bcol:"#555"},
+    "horizBar":{bgcol:"#333",bcol:"#555"},
     
     "resourceCountEmpty":{col:"#F00"},"resourceCountNearFull":{col:"#FF0"},"resourceCountFull":{col:"#0F0"},
     "resourceRow":{bgcol:"#000",col:"#f0f0f0"},
     "resourceRow:nth-child(odd)":{bgcol:"#333",},
     "resourceRow:nth-child(even)":{bgcol:"#222",},
     
-    "buySellBtn":{bgcol:"#000",col:"#000",width:2,bcol:"#333",radius:10},
+    "buySellBtn":{bgcol:"#000",col:"#000",bcol:"#333",radius:10},
     "buyBtn":{parent:"buySellBtn",bgcol:"#191"},"buyBtn:hover":{parent:"buyBtn",bgcol:"#181",bcol:"#343"},
     "sellBtn":{parent:"buySellBtn",bgcol:"#911"},"sellBtn:hover":{bgcol:"#811",bcol:"#433"},
     "buySellAmntBtn":{parent:"basicBtn",bgcol:"#444"},"buySellAmntBtn:hover":{parent:"basicBtn",bgcol:"#494949"},
     "curBuySellAmnt":{parent:"buySellAmntBtn",bgcol:"#555"},"curBuySellAmnt:hover":{parent:"buySellAmntBtn:hover",bgcol:"#595959"},
     
+    "tabSections":{parent:"basicBtn",bgcol:"#333",col:"#eee",bcol:"#555",radius:5},"tabSections:hover":{parent:"tabSections",bgcol:"#444",bcol:"#666"},
+    "themeSelect":{bgcol:"#333"},
     
+    "createRow":{bgcol:"#292929",col:"#e0e0e0",radius:1,bcol:"#333"}
     }
     function btnStyle(name,stl){return "."+name+(stl.nth==1||stl.nth==2?":nth-child("+(stl.nth==1?"odd":"even")+")":"")+"{background-color:"+stl.bgcol+";color:"+stl.col+";border:"+stl.width+"px solid "+stl.bcol+";border-radius:"+stl.radius+"px;"+(stl.height?"height:"+stl.height+"px;":"")+"}"}
     function bst(a,{bgcol=null,col=null,width=null,bcol=null,radius=null,height=false,nth=0}={}){
@@ -105,17 +138,20 @@ document.addEventListener('DOMContentLoaded', function(){
             "}"
         // return "."+name++"{background-color:"+stl.bgcol+";color:"+stl.col+";border:"+stl.width+"px solid "+stl.bcol+";border-radius:"+stl.radius+"px;"+(stl.height?"height:"+stl.height+"px;":"")+"}"
     }
-    s=Array.from(Object.entries(impStyle),function([k,v]){return bst(k,v)
-        pr=v.parent??"main";if(k=="main"){return btnStyle(k,v)}else{var st=styles(impStyle[pr],v);impStyle["p."+pr]=impStyle[pr];console.log(k,pr,impStyle[pr],styles(impStyle[pr],v),impStyle["p."+pr]);return btnStyle(k,impStyle[pr])}}).join("");
 
-    console.log(s)
-    cls.textContent=s
+    // console.log(s)
+    cls.textContent=Array.from(Object.entries(impStyle),function([k,v]){return bst(k,v)
+        pr=v.parent??"main";if(k=="main"){return btnStyle(k,v)}else{var st=styles(impStyle[pr],v);impStyle["p."+pr]=impStyle[pr];console.log(k,pr,impStyle[pr],styles(impStyle[pr],v),impStyle["p."+pr]);return btnStyle(k,impStyle[pr])}}).join("");
     document.head.appendChild(cls);
-    
+    //priority 1 - needs to be done for the user to see it
+    //priority 2 - needs to be done to be seen, but not highest priority (just the conatiner in the first build then build everything afterwards)
+    //priority 3 - user wont see imediatley
     document.getElementById("body").insertAdjacentHTML("beforeend",
+        //Tab selection Bar (priority 1)
         "<div class='selectBar' id='selectBar'>"+
-            (["store","build","research","settings"].map(a=>"<a class='closeTab'  href='javascript:void(0);' onclick='cotb(\""+a+"\")' id='"+a+"Tab'>"+cptl(a)+"</a>")).join("")+
+            (["store","build","research","setting"].map(a=>"<a class='tabSections closeTab'  href='javascript:void(0);' onclick='cotb(\""+a+"\")' id='"+a+"Tab'>"+stringPack[a+"_tab"]+"</a>")).join("")+
         "</div>"+
+        //info bar (priority 1)
         "<div class='infoBar' id='info_bar'><table id='info_table'><caption id='info_caption'>"+stringPack["info_caption"]+"</caption>"+
             "<tr class='infoRow resourceRow' id='money_row'><td id='type'>$</td><td id='count'><span class='countEmpty' id='total'>0</span> / <span class='countEmpty' id='max'>10</span></td><td id='perSec'>0 /s</td></tr>"+
             Array.from(["bsc_chp","adv_chp","bsc_brd","adv_brd"],(a,b)=>""+
@@ -123,28 +159,46 @@ document.addEventListener('DOMContentLoaded', function(){
                 ).join("")
             ).join("")+
             "<tr class='infoRow hidel2' id='phantomRow' data-note='This is basically a row that will never get seen, but this way I can \"set\" the width of the info_row'><td>Phantom Row</td><td>100.00ZZ / 100.00ZZ</td><td>100.00ZZ /s</td></tr>"+
-        "</table></div><div class='eventBar' id='eventBar'><div class='buildQue' id='buildQue'><h3>Building Queue: (<span id='count'>0</span>/<span id='max'>0</span></h3></div>"+
-        
-        "</div><div class='buildBar hideBar' id='buildBar'><h2 id='buildChips'>Build Chips!<hr class='horizBar'></h2>"+
-            Array.from(Object.entries(cts),([k,v])=>"<button class='basicBtn' onclick=\"createChip('"+k+"')\" id='build"+k+"'>Create a "+stringPack[k]+" chip for "+
-                v.reduce((a, b, c) => c % 2 ? a + `<b>${b} ${stringPack[v[c-1]]}</b>, ` : a, "").slice(0, -2)+
-            " chips!</button>"
-            ).join("")+
-        "</div><div class='storeBar hideBar' id='storeBar'><h2 id='store'>Store</h2><hr class='horizBar'><button class='basicBtn buySell buySellBtn buyBtn' onclick='bt(0)'>Buy</button><button class='buySell buySellBtn sellBtn' onclick='bt(1)'>Sell</button><span class='vertBar'></span>"+
+        "</table></div>"+
+        //event/queue bar (priority 2.0)
+        "<div class='eventBar' id='eventBar'></div>"+
+        //BUILD bar (priority 2.2)
+        "<div class='buildBar hideBar' id='buildBar'></div>"+
+        //STORE
+        "<div class='storeBar hideBar' id='storeBar'><h2 id='store'>Store</h2><hr class='horizBar'><button class='basicBtn buySell buySellBtn buyBtn' onclick='bt(0)'>Buy</button><button class='buySell buySellBtn sellBtn' onclick='bt(1)'>Sell</button><span class='vertBar'></span>"+
             Array.from({length:4}, (_, a) => "<button class='"+(a==0?"curBuySellAmnt":"")+" basicBtn buySellAmnt buySellAmntBtn' onclick='ba("+ab[a]+")'>"+ab[a]+"</button>"
             ).join("")+
         "<hr class='horizBar'>"+//"<span class='errorText' id='errorText'></span>"+
             Array.from(["bsc_chp","adv_chp","bsc_brd","adv_brd"],(a,b)=>"<div class='"+(us[a]?"":"hide")+"' id='"+a+"_sctn'><hr class='horizBar'><h3 id='"+a+"'>"+stringPack[a]+"<hr class='horizBar'></h3>"+
-                Array.from(cl[a],(A,B)=>"<button class='basicBtn "+(ust[a].includes(A)?"":"hide")+"' id='"+A+"_buy' onclick=\"buyChip('"+A+"')\">"+(ust[a].includes(A)?"<span id='buySell'>Buy</span> <span id='buySellAmount'>1</span> "+stringPack[A]+" chip (Cost: $<span id='"+A+"Price'>0</span>)":"")+"</button>"
+                Array.from(cl[a],(A,B)=>"<button class='basicBtn "+(ust[a].includes(A)?"":"hide")+"' id='"+A+"_buy' onclick=\"buyChip('"+A+"')\">"+
+                    //if it is unlocked, actually build it, otherwise do that when we unlock it
+                    (ust[a].includes(A)?"<span id='buySell'>Buy</span> <span id='buySellAmount'>1</span> "+stringPack[A]+" chip (Cost: $<span id='"+A+"Price'>0</span>)":"")+"</button>"
                 ).join("")+
             "</div>"
             ).join("")+
-        "<hr class='horizBar'></div></div><div class='researchBar hideBar' id='researchBar'>"+
-            ""+
-        "</div><div class='settingBar hideBar' id='settingsBar'><button class='basicBtn exportBtn' onclick=\"saveGame('export')\" id='exportBtn'>Export Game</button><button class='basicBtn importBtn' onclick=\"saveGame('import')\" id='importBtn'>Import Game</button><br><textarea id='saveBox' rows='5' cols='50' style='overflow-wrap: break-word;' wrap='soft'></textarea></div>"
+        "<hr class='horizBar'></div></div>"+
+        //research bar (p 2.2)
+        "<div class='researchBar hideBar' id='researchBar'></div>"+
+        //settings bar (p2.1)
+        "<div class='settingBar hideBar' id='settingBar'></div>"
     )
     otb(ont)
-
+    //event bar content (p2.0)
+    document.getElementById("eventBar").insertAdjacentHTML("beforeend",
+    "<div class='buildQue' id='buildQue'><h3>Building Queue: (<span id='count'>0</span>/<span id='max'>0</span>)</h3>"+
+        Array.from(Object.entries(cq),([k,v])=>"<span class='createRow' id='create_"+k+"'>"+stringPack[k]+"  [<span class='createDur' id='dur'>"+v.toFixed(0)+"</span> s]</span>").join("")+
+        "</div>")
+    //settings bar (p2.1)
+    document.getElementById("settingBar").insertAdjacentHTML("beforeend","<label for='theme'>Theme</label><select class='themeSelect' id='theme' onclick='changeTheme(this.value)' name='theme'>"+//soft is unsaturated
+        Array.from(["light","dark","soft light","soft dark","crunchy"],(a,_)=>"<option value='"+a+"'>"+cptl(a)+"</option>").join("")+
+        "</select>"+
+        "<br><button class='basicBtn exportBtn' onclick=\"saveGame('export')\" id='exportBtn'>Export Game</button><button class='basicBtn importBtn' onclick=\"saveGame('import')\" id='importBtn'>Import Game</button><br><textarea id='saveBox' rows='5' cols='50' style='overflow-wrap: break-word;' wrap='soft'></textarea>")
+    //build bar contetn (p2.2)
+    document.getElementById("buildBar").insertAdjacentHTML("beforeend","<h2 id='buildChips'>Create Chips!<hr class='horizBar'></h2>"+
+            Array.from(Object.entries(cts),([k,v])=>"<button class='basicBtn' onclick=\"createChip('"+k+"')\" id='build"+k+"'>Learn how to make <b>"+stringPack[k]+"</b> chips for "+
+                v.reduce((a, b, c) => c % 2 ? a + `<b>${b} ${stringPack[v[c-1]]}</b>, ` : a, "").slice(0, -2)+
+            " chips!</button>"
+            ).join(""))
     // for(var i of chips){rowCount[i]=document.querySelector("#"+i+"Row #count");price[i]=document.getElementById(i+"Price")}
     // // const price={"not":document.getElementById("notPrice"),"and":document.getElementById("andPrice"),"nand":document.getElementById("nandPrice"),"or":document.getElementById("orPrice"),"nor":document.getElementById("norPrice"),"xor":document.getElementById("xorPrice"),"xnor":document.getElementById("xnorPrice")}
     ud()
