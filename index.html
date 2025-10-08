@@ -12,7 +12,7 @@ body{margin:0;overflow:hidden;transform-origin:top left;font-family:"Space Mono"
 h2{text-align:center;}
 h3{text-align:center;}
 
-hr{}
+hr{height:3px}
 h2 hr{height:2px;}
 
     /*Style for the scroll bar*/
@@ -22,19 +22,19 @@ h2 hr{height:2px;}
 
 /*.errorText{color:#E00;background-color:rgb(100,34,34,0.3);}*/
     /*General Button style*/
-button{width:20em;height:2.5em;padding:5px 5px;margin:0.5em 0.5em;text-align:center;display:inline-block;}
+button{width:20em;height:2.5em;padding:5px 5px;margin:0.5em 0.5em;text-align:center;display:inline-block;border-style:solid;border-width:2px;}
 button:hover{}
 
     /*Tab Link Styling*/
-a{padding:0px 3px 1px 3px;margin-left:10px;}
-a:hover{border:5px solid #666;background-color:#444;}
+a{padding:0px 3px 1px 3px;;text-decoration:none;border-style:solid;margin-left:10px;border-width:5px;}
+a:hover{border-style:solid;border-width:5px}
 
-.openTab{border-top:2px solid #555;}
-.openTab:hover{border-top:2px solid #666;}
-.closeTab{border-top:5px solid #555;}
+.openTab{border-top-width:3px;}/* solid #555*/
+.openTab:hover{border-top-width:3px;}/* solid #666*/
+.closeTab{border-top-width:5px;}/* solid #555*/
 
     /*Buy and Sell Styling*/
-.buySell{width:2.7em;margin-left:0.5em;margin-right:0.5em;}
+.buySell{width:2.7em;margin-left:0.5em;margin-right:0.5em;border-width:2}
 .buySellAmnt{width:2em;margin-left:0.5em;margin-right:0.5em;}
     
     /*Info Table Styling*/
@@ -43,9 +43,12 @@ table{width:30em;}
 /*tr:nth-child(even) {background-color: #222;}*/
 .infoRow{height:1.1em;text-align:center;width:480px;}
 
+.createQueue{padding:0px;}
+.createRow{border-style:solid;padding:0px 2px;}
+
 /*Settings for each tab*/
     /*General*/
-.settingBar, .storeBar, .researchBar, .buildBar{width:calc(100% - 200px - 350px);height:100%;overflow-y:auto;overflow-x:hidden;position:fixed;top:0;left:0;margin-top:50px;margin-left:350px;margin-right:200px;border:5px solid #444;text-align:center;}
+.settingBar, .storeBar, .researchBar, .buildBar{width:100%;height:100%;overflow-y:auto;overflow-x:hidden;position:fixed;top:0;left:0;margin-top:50px;margin-left:30px;margin-right:200px;border:5px solid #444;text-align:center;}/*calc(100% - 200px - 350px)*/
     /*Specific*/
 .researchBar{text-align:left;}
 .buildBar{text-align:center;}
@@ -68,6 +71,6 @@ table{width:30em;}
 </head>
 <body class="main" id="body">
 
-<script src="script.js"></script>
+<script src="script2.js"></script>
 </body>
 </html>
