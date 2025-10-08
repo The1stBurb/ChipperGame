@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head style="background-color:#0000FF;">
+<meta charset="UTF-8">
+<title>chipper</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/*General tag based Styling*/
+body{margin:0;overflow:hidden;transform-origin:top left;font-family:"Space Mono",monospace;margin-top:-20px;}
+
+h2{text-align:center;}
+h3{text-align:center;}
+
+hr{}
+h2 hr{height:2px;}
+
+    /*Style for the scroll bar*/
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background: transparent;border-left:3px solid #444;}
+::-webkit-scrollbar-thumb{background-color: #333;border-color:#555}
+
+/*.errorText{color:#E00;background-color:rgb(100,34,34,0.3);}*/
+    /*General Button style*/
+button{width:20em;height:2.5em;padding:5px 5px;margin:0.5em 0.5em;text-align:center;display:inline-block;}
+button:hover{}
+
+    /*Tab Link Styling*/
+a{padding:0px 3px 1px 3px;margin-left:10px;}
+a:hover{border:5px solid #666;background-color:#444;}
+
+.openTab{border-top:2px solid #555;}
+.openTab:hover{border-top:2px solid #666;}
+.closeTab{border-top:5px solid #555;}
+
+    /*Buy and Sell Styling*/
+.buySell{width:2.7em;margin-left:0.5em;margin-right:0.5em;}
+.buySellAmnt{width:2em;margin-left:0.5em;margin-right:0.5em;}
+    
+    /*Info Table Styling*/
+table{width:30em;}
+/*tr:nth-child(odd) {background-color: #333;}*/
+/*tr:nth-child(even) {background-color: #222;}*/
+.infoRow{height:1.1em;text-align:center;width:480px;}
+
+/*Settings for each tab*/
+    /*General*/
+.settingBar, .storeBar, .researchBar, .buildBar{width:calc(100% - 200px - 350px);height:100%;overflow-y:auto;overflow-x:hidden;position:fixed;top:0;left:0;margin-top:50px;margin-left:350px;margin-right:200px;border:5px solid #444;text-align:center;}
+    /*Specific*/
+.researchBar{text-align:left;}
+.buildBar{text-align:center;}
+.buildBar button{width:30em;}
+    /*Ones that are special*/
+.infoBar{font-size:0.7em;position:fixed;top:0;left:0;margin-top:70px;}
+.eventBar{font-size:0.7em;position:fixed;top:0;left:calc(100% - 200px);margin-top:70px;}
+.selectBar{width:100%;height:20px;position:fixed;top:0;left:0;margin-top:10px;padding-bottom:20px;border-bottom:5px solid #444;display:inline-block;}
+
+/*General class based Styling*/
+.hide{display:none;}
+.hideBar{display:none;}
+.hidel2{display:none;}/*A "higher* level of hide, so that it WILL NOT be seen, dont ask/
+/*Color Styling*/
+
+
+
+/*background-color:#222;color:#fff;border:#444*/
+</style>
+</head>
+<body class="main" id="body">
+
+<script src="script2.js"></script>
+</body>
+</html>
